@@ -107,9 +107,8 @@ import ReelsContainer, {
     for (let i = 0; i < reelsContainer.reels.length; i++) {
       const r = reelsContainer.reels[i];
       // Update blur filter y amount based on speed.
-      // This would be better if calculated with time in mind also. Now blur depends on frame rate.
 
-      r.blur.blurY = (r.position - r.previousPosition) * 8;
+      r.blur.blurY = (r.position - r.previousPosition) * 100;
       r.previousPosition = r.position;
 
       // Update symbol positions on reel.
