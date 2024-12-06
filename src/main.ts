@@ -22,13 +22,12 @@ import ReelsContainer, {
   });
 
   document.body.appendChild(app.canvas);
-  app.renderer.resize(window.innerWidth, window.innerHeight - 4);
   window.addEventListener("resize", function () {
-    app.renderer.resize(window.innerWidth, window.innerHeight - 4);
+    app.renderer.resize(window.innerWidth, window.innerHeight);
   });
 
   // Build the reels
-  const reelsContainer = new ReelsContainer();
+  const reelsContainer = new ReelsContainer(isWin);
 
   app.stage.addChild(reelsContainer);
 
@@ -100,6 +99,14 @@ import ReelsContainer, {
   bottom.addListener("pointerdown", () => {
     reelsContainer.startPlay();
   });
+
+  function isWin(count: number) {
+    if (count >= 3) {
+      console.log("Big Win");
+    } else if (count >= 2) {
+      console.log("Win");
+    }
+  }
 
   // Listen for animate update.
   app.ticker.add(() => {

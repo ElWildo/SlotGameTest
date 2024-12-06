@@ -58,10 +58,12 @@ export default class ReelsContainer extends Container {
   public reels: Reel[] = [];
   public tweening: TwinTo[] = [];
   private running = false;
-  constructor() {
+  private calculateWin: (count: number) => void;
+  constructor(calculateWin: (count: number) => void) {
     super();
     this.pivot.x = this.width / 2;
     this.pivot.y = this.height / 2;
+    this.calculateWin = calculateWin;
     for (let i = 0; i < 5; i++) {
       const rc = new Container();
 
@@ -161,24 +163,19 @@ export default class ReelsContainer extends Container {
         if (!symb) console.log("symb undefined");
         if (!lastsymb || lastsymb != symb) {
           if (lastsymb != symb) {
-            this.isWin(count);
+            // this.isWin(count);
+            this.calculateWin(count);
           }
           lastsymb = symb;
           count = 1;
         } else {
           count++;
-          if (i === this.reels.length - 1) this.isWin(count);
+          if (i === this.reels.length - 1)
+            // this.isWin(count);
+            this.calculateWin(count);
         }
       }
       lastsymb = undefined;
-    }
-  }
-
-  isWin(count: number) {
-    if (count >= 3) {
-      console.log("Big Win");
-    } else if (count >= 2) {
-      console.log("Win");
     }
   }
 
