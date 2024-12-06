@@ -11,7 +11,12 @@ import ReelsContainer from "./Comnponents/ReelsContainer";
 import BigWinScreen from "./Comnponents/WinScreens/BigWinScreen";
 import SmallWinScreen from "./Comnponents/WinScreens/SmallWinScreen";
 import { TwinTo } from "./Declarations/ReelsContainer";
-import { REEL_WIDTH, slotTextures, SYMBOL_SIZE } from "./Setup/config";
+import {
+  REEL_WIDTH,
+  slotTextures,
+  SYMBOL_SIZE,
+  WinCount,
+} from "./Setup/config";
 
 (async () => {
   const app = new Application();
@@ -106,10 +111,10 @@ import { REEL_WIDTH, slotTextures, SYMBOL_SIZE } from "./Setup/config";
   app.stage.addChild(bigWinScreen);
   app.stage.addChild(smallWinScreen);
 
-  function isWin(count: number) {
-    if (count >= 3) {
+  function isWin(count: WinCount) {
+    if (count["3"] > 0) {
       bigWinScreen.playAnimation();
-    } else if (count >= 2) {
+    } else if (count["2"] > 0) {
       smallWinScreen.playAnimation();
     }
   }

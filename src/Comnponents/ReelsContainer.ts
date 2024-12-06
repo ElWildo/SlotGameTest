@@ -6,14 +6,15 @@ import {
   REEL_WIDTH,
   slotTextures,
   SYMBOL_SIZE,
+  WinCount,
 } from "../Setup/config";
 
 export default class ReelsContainer extends Container {
   public reels: Reel[] = [];
   public tweening: TwinTo[] = [];
   private running = false;
-  private calculateWin: (count: number) => void;
-  constructor(calculateWin: (count: number) => void) {
+  private calculateWin: (count: WinCount) => void;
+  constructor(calculateWin: (count: WinCount) => void) {
     super();
     this.pivot.x = this.width / 2;
     this.pivot.y = this.height / 2;
@@ -107,27 +108,31 @@ export default class ReelsContainer extends Container {
       .sort((a, b) => a - b)
       .slice(1);
 
+    const countRes: WinCount = { "2": 0, "3": 0, "4": 0, "5": 0 };
+
     for (let index = 0; index < rows.length; index++) {
       let lastsymb: string | undefined = undefined;
-      let count = 0;
+      let count: number = 0;
       for (let i = 0; i < this.reels.length; i++) {
         const symb = await this.reels[i].symbols.find(
           (symbol) => Math.floor(symbol.position.y) == rows[index]
         )?.texture.label;
         if (!symb) console.log("symb undefined");
         if (!lastsymb || lastsymb != symb) {
-          if (lastsymb != symb) {
-            this.calculateWin(count);
+          if (lastsymb != symb && count.toString() in countRes) {
+            countRes[count.toString() as keyof WinCount]++;
           }
           lastsymb = symb;
           count = 1;
         } else {
           count++;
-          if (i === this.reels.length - 1) this.calculateWin(count);
+          if (i === this.reels.length - 1 && count.toString() in countRes)
+            countRes[count.toString() as keyof WinCount]++;
         }
       }
       lastsymb = undefined;
     }
+    this.calculateWin(countRes);
   }
 
   // Reels done handler.

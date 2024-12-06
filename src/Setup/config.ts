@@ -30,3 +30,10 @@ export const slotTextures = [
   Texture.from("./assets/symbols/s08.png"),
   Texture.from("./assets/symbols/s09.png"),
 ];
+
+export interface WinCount {
+  "2": number;
+  "3": number;
+  "4": number;
+  "5": number;
+}
