@@ -1,6 +1,12 @@
 import { BlurFilter, Container, Sprite } from "pixi.js";
 import { Reel, TwinTo } from "../Declarations/ReelsContainer";
-import { REEL_WIDTH, slotTextures, SYMBOL_SIZE } from "../Setup/config";
+import {
+  REEL_SYM_HEIGHT,
+  REEL_SYM_WIDTH,
+  REEL_WIDTH,
+  slotTextures,
+  SYMBOL_SIZE,
+} from "../Setup/config";
 
 export default class ReelsContainer extends Container {
   public reels: Reel[] = [];
@@ -12,7 +18,7 @@ export default class ReelsContainer extends Container {
     this.pivot.x = this.width / 2;
     this.pivot.y = this.height / 2;
     this.calculateWin = calculateWin;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < REEL_SYM_WIDTH; i++) {
       const rc = new Container();
 
       rc.x = i * REEL_WIDTH;
@@ -31,7 +37,7 @@ export default class ReelsContainer extends Container {
       rc.filters = [reel.blur];
 
       // Build the symbols
-      for (let j = 0; j < 4; j++) {
+      for (let j = 0; j < REEL_SYM_HEIGHT; j++) {
         const symbol = new Sprite(
           slotTextures[Math.floor(Math.random() * slotTextures.length)]
         );
@@ -111,16 +117,13 @@ export default class ReelsContainer extends Container {
         if (!symb) console.log("symb undefined");
         if (!lastsymb || lastsymb != symb) {
           if (lastsymb != symb) {
-            // this.isWin(count);
             this.calculateWin(count);
           }
           lastsymb = symb;
           count = 1;
         } else {
           count++;
-          if (i === this.reels.length - 1)
-            // this.isWin(count);
-            this.calculateWin(count);
+          if (i === this.reels.length - 1) this.calculateWin(count);
         }
       }
       lastsymb = undefined;

@@ -3,6 +3,9 @@ import { Assets, Texture } from "pixi.js";
 export const REEL_WIDTH = 260;
 export const SYMBOL_SIZE = 250;
 
+export const REEL_SYM_WIDTH = 5;
+export const REEL_SYM_HEIGHT = 4;
+
 await Assets.load([
   "./assets/symbols/s01.png",
   "./assets/symbols/s02.png",
