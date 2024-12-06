@@ -7,12 +7,11 @@ import {
   FillGradient,
 } from "pixi.js";
 import "./style.css";
-import ReelsContainer, {
-  REEL_WIDTH,
-  slotTextures,
-  SYMBOL_SIZE,
-  TwinTo,
-} from "./Comnponents/ReelsContainer";
+import ReelsContainer from "./Comnponents/ReelsContainer";
+import BigWinScreen from "./Comnponents/WinScreens/BigWinScreen";
+import SmallWinScreen from "./Comnponents/WinScreens/SmallWinScreen";
+import { TwinTo } from "./Declarations/ReelsContainer";
+import { REEL_WIDTH, slotTextures, SYMBOL_SIZE } from "./Setup/config";
 
 (async () => {
   const app = new Application();
@@ -100,11 +99,18 @@ import ReelsContainer, {
     reelsContainer.startPlay();
   });
 
+  //Set Win Screens
+
+  const bigWinScreen = new BigWinScreen();
+  const smallWinScreen = new SmallWinScreen();
+  app.stage.addChild(bigWinScreen);
+  app.stage.addChild(smallWinScreen);
+
   function isWin(count: number) {
     if (count >= 3) {
-      console.log("Big Win");
+      bigWinScreen.playAnimation();
     } else if (count >= 2) {
-      console.log("Win");
+      smallWinScreen.playAnimation();
     }
   }
 

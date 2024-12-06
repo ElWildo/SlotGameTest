@@ -1,58 +1,6 @@
-import {
-  Assets,
-  BlurFilter,
-  Container,
-  ContainerChild,
-  Sprite,
-  Texture,
-} from "pixi.js";
-
-export interface Reel {
-  container: Container<ContainerChild>;
-  symbols: Sprite[];
-  position: number;
-  previousPosition: number;
-  blur: BlurFilter;
-}
-
-export interface TwinTo {
-  object: Reel;
-  property: "position";
-  propertyBeginValue: Reel["position"];
-  target: number;
-  time: number;
-  easing: (n: number) => number;
-  complete: (() => void) | null;
-  start: number;
-}
-
-export const REEL_WIDTH = 260;
-export const SYMBOL_SIZE = 250;
-
-await Assets.load([
-  "./assets/symbols/s01.png",
-  "./assets/symbols/s02.png",
-  "./assets/symbols/s03.png",
-  "./assets/symbols/s04.png",
-  "./assets/symbols/s05.png",
-  "./assets/symbols/s06.png",
-  "./assets/symbols/s07.png",
-  "./assets/symbols/s08.png",
-  "./assets/symbols/s09.png",
-]);
-
-export const slotTextures = [
-  Texture.from("./assets/symbols/s01.png"),
-  Texture.from("./assets/symbols/s01.png"),
-  Texture.from("./assets/symbols/s02.png"),
-  Texture.from("./assets/symbols/s03.png"),
-  Texture.from("./assets/symbols/s04.png"),
-  Texture.from("./assets/symbols/s05.png"),
-  Texture.from("./assets/symbols/s06.png"),
-  Texture.from("./assets/symbols/s07.png"),
-  Texture.from("./assets/symbols/s08.png"),
-  Texture.from("./assets/symbols/s09.png"),
-];
+import { BlurFilter, Container, Sprite } from "pixi.js";
+import { Reel, TwinTo } from "../Declarations/ReelsContainer";
+import { REEL_WIDTH, slotTextures, SYMBOL_SIZE } from "../Setup/config";
 
 export default class ReelsContainer extends Container {
   public reels: Reel[] = [];
