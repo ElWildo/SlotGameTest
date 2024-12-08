@@ -5,11 +5,13 @@ import {
   Text,
   TextStyle,
   FillGradient,
+  Rectangle,
+  BlurFilter,
+  ColorMatrixFilter,
+  Container,
 } from "pixi.js";
 import "./style.css";
-import ReelsContainer from "./Comnponents/ReelsContainer";
-import BigWinScreen from "./Comnponents/WinScreens/BigWinScreen";
-import SmallWinScreen from "./Comnponents/WinScreens/SmallWinScreen";
+import ReelsContainer from "./Components/ReelsContainer";
 import { TwinTo } from "./Declarations/ReelsContainer";
 import {
   REEL_WIDTH,
@@ -17,13 +19,28 @@ import {
   SYMBOL_SIZE,
   WinCount,
 } from "./Setup/config";
+import WinScreen from "./Components/WinScreen";
+import { gsap } from "gsap";
+import { PixiPlugin } from "gsap/PixiPlugin";
+gsap.registerPlugin(PixiPlugin);
+PixiPlugin.registerPIXI({
+  DisplayObject: Container,
+  Graphics: Graphics,
+  filters: {
+    BlurFilter: BlurFilter,
+    ColorMatrixFilter: ColorMatrixFilter,
+  },
+});
 
 (async () => {
   const app = new Application();
   await app.init({
     resizeTo: window,
     resolution: window.innerWidth / window.innerHeight,
+    sharedTicker: true,
   });
+
+  PixiPlugin.registerPIXI(app);
 
   document.body.appendChild(app.canvas);
   window.addEventListener("resize", function () {
@@ -106,16 +123,16 @@ import {
 
   //Set Win Screens
 
-  const bigWinScreen = new BigWinScreen();
-  const smallWinScreen = new SmallWinScreen();
-  app.stage.addChild(bigWinScreen);
-  app.stage.addChild(smallWinScreen);
+  const winScreen = new WinScreen(
+    new Rectangle(0, 0, app.screen.width, app.screen.height)
+  );
+  app.stage.addChild(winScreen);
 
   function isWin(count: WinCount) {
     if (count["3"] > 0) {
-      bigWinScreen.playAnimation();
+      winScreen.playBigWinAnimation();
     } else if (count["2"] > 0) {
-      smallWinScreen.playAnimation();
+      winScreen.playSmallWinAnimation();
     }
   }
 
@@ -177,7 +194,6 @@ import {
       );
     }
   });
-
   // Basic lerp funtion.
   function lerp(a1: number, a2: number, t: number) {
     return a1 * (1 - t) + a2 * t;
