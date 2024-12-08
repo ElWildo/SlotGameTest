@@ -2,7 +2,7 @@ import { AnimatedSprite, Container, Rectangle } from "pixi.js";
 import { coinAnimation } from "../Setup/config";
 import { gsap } from "gsap";
 
-const totTimeAnim = 2.5;
+const totTimeAnim = 3;
 const totalCoins = 1000;
 
 export default class CoinsEmitter extends Container {
@@ -56,12 +56,12 @@ export default class CoinsEmitter extends Container {
       x: this.generateRandomXLand(coinAnim),
       width: 100,
       height: 100,
-      duration: 5,
+      duration: totTimeAnim,
       ease: "elastic",
     });
     timeline.call(() => {
       if (this.running) {
-        timeline.play();
+        timeline.restart();
       } else {
         timeline.kill();
         coinAnim.stop();
