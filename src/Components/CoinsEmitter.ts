@@ -63,52 +63,54 @@ export default class CoinsEmitter extends Container {
       if (this.running) {
         timeline.play();
       } else {
-        this.removeChild(coinAnim);
+        timeline.kill();
         coinAnim.stop();
         coinAnim.destroy();
-        timeline.kill();
+        this.children.length > 1
+          ? this.removeChild(coinAnim)
+          : this.removeChildren();
+        this.coins.length == 1
+          ? (this.coins = [])
+          : this.coins.splice(
+              this.coins.findIndex((coin) => coin.animation == coinAnim),
+              1
+            );
       }
     });
 
     this.coins.push({ animation: coinAnim, tween: timeline });
   }
 
-  setUpAnimationCoins() {
+  async setUpAnimationCoins() {
+    this.coins = [];
+    this.removeChildren();
     for (let i = 0; i < totalCoins; i++) {
       this.addCoin();
     }
   }
 
-  playAnimationCoins() {
+  async playAnimationCoins() {
     this.running = true;
-    this.setUpAnimationCoins();
-    for (let i = 0; i < this.coins.length; i++) {
+    await this.setUpAnimationCoins();
+    this.coins.forEach((coin, index) => {
       setTimeout(() => {
         if (this.running) {
-          this.coins[i].animation.play();
-          this.coins[i].tween.play();
+          coin.animation.play();
+          coin.tween.play();
         } else {
-          this.removeChild(this.coins[i].animation);
-          this.coins[i].animation.destroy();
-          this.coins[i].tween.kill();
+          if (coin) {
+            coin.tween.kill();
+            coin.animation.destroy();
+            this.children.length > 1
+              ? this.removeChild(coin.animation)
+              : this.removeChildren();
+            this.coins.length == 1
+              ? (this.coins = [])
+              : this.coins.splice(index, 1);
+          }
         }
-      }, i * 10);
-    }
-    //   (
-    //     coin: { tween: gsap.core.Timeline; animation: AnimatedSprite },
-    //     index: number
-    //   ) => {
-    //     setTimeout(() => {
-    //       if (this.running) {
-    //         coin.animation.play();
-    //         coin.tween.play();
-    //       } else {
-    //         this.removeChild(coin.animation);
-    //         coin.tween.kill();
-    //       }
-    //     }, index * 25);
-    //   }
-    // );
+      }, index * 10);
+    });
   }
 
   stopAnimationCoins() {

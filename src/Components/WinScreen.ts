@@ -8,10 +8,6 @@ export default class WinScreen extends Container {
     this.boundsArea = boundsArea;
     this.coinsEmitter = new CoinsEmitter(this.boundsArea);
     this.addChild(this.coinsEmitter);
-    if (this.coinsEmitter) this.coinsEmitter.playAnimationCoins();
-    setTimeout(() => {
-      if (this.coinsEmitter) this.coinsEmitter.stopAnimationCoins();
-    }, 5000);
   }
 
   playInSmall() {
@@ -27,11 +23,15 @@ export default class WinScreen extends Container {
   }
 
   playInBig() {
+    if (this.coinsEmitter) this.coinsEmitter.playAnimationCoins();
     console.log("Slide Big win in");
     return Promise.resolve();
   }
   playOutBig() {
     console.log("Slide Big win out");
+    setTimeout(() => {
+      if (this.coinsEmitter) this.coinsEmitter.stopAnimationCoins();
+    }, 10000);
   }
 
   playSmallWinAnimation() {
