@@ -33,14 +33,18 @@ export default class CoinsEmitter extends Container {
 
   generateRandomXLand(coin: AnimatedSprite) {
     return coin.position.x >= this.boundsArea.width / 2
-      ? Math.floor(Math.random() * (this.boundsArea.width / 2 + 1)) +
+      ? Math.floor(
+          Math.random() *
+            (this.boundsArea.width + 100 - this.boundsArea.width / 2 + 1)
+        ) +
           this.boundsArea.width / 2
-      : Math.floor(Math.random() * (this.boundsArea.width / 2 + 1));
+      : Math.floor(Math.random() * (this.boundsArea.width / 2 + 100 + 1)) - 100;
   }
 
   addCoin() {
     const coinAnim = new AnimatedSprite(coinAnimation);
     coinAnim.setSize(0, 0);
+    coinAnim.pivot = 0.5;
     this.addChild(coinAnim);
     coinAnim.position.y = this.boundsArea.height / 2;
     coinAnim.position.x = this.generateRandomXStart();
