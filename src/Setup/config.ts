@@ -1,10 +1,18 @@
-import { Assets, Texture, textureFrom } from "pixi.js";
+import { Assets, Texture } from "pixi.js";
 
 export const REEL_WIDTH = 260;
 export const SYMBOL_SIZE = 250;
 
-export const REEL_SYM_WIDTH = 5;
-export const REEL_SYM_HEIGHT = 4;
+export const REELS_AMOUNT = 5;
+export const SYM_PER_REEL_AMOUNT = 4;
+
+export const spinPerReelTest = [7, 10, 14, 20, 30];
+
+export const spinTime = 5;
+
+export const timeAnimationCoinFall = 3;
+export const totalCoinsInEmitter = 1000;
+export const bounceBackReel = 50;
 
 await Assets.load([
   "./assets/coin/coinAnimation.json",

@@ -13,12 +13,7 @@ import {
 import "./style.css";
 import ReelsContainer from "./Components/ReelsContainer";
 import { TwinTo } from "./Declarations/ReelsContainer";
-import {
-  REEL_WIDTH,
-  slotTextures,
-  SYMBOL_SIZE,
-  WinCount,
-} from "./Setup/config";
+import { REEL_WIDTH, SYMBOL_SIZE, WinCount } from "./Setup/config";
 import WinScreen from "./Components/WinScreen";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
@@ -39,8 +34,6 @@ PixiPlugin.registerPIXI({
     resolution: window.innerWidth / window.innerHeight,
     sharedTicker: true,
   });
-
-  PixiPlugin.registerPIXI(app);
 
   document.body.appendChild(app.canvas);
   window.addEventListener("resize", function () {
@@ -135,37 +128,6 @@ PixiPlugin.registerPIXI({
       winScreen.playSmallWinAnimation();
     }
   }
-
-  // Listen for animate update.
-  app.ticker.add(() => {
-    // Update the slots.
-    for (let i = 0; i < reelsContainer.reels.length; i++) {
-      const r = reelsContainer.reels[i];
-      // Update blur filter y amount based on speed.
-
-      r.blur.blurY = (r.position - r.previousPosition) * 100;
-      r.previousPosition = r.position;
-
-      // Update symbol positions on reel.
-      for (let j = 0; j < r.symbols.length; j++) {
-        const s = r.symbols[j];
-        const prevy = s.y;
-
-        s.y = ((r.position + j) % r.symbols.length) * SYMBOL_SIZE - SYMBOL_SIZE;
-        if (s.y < 0 && prevy > SYMBOL_SIZE) {
-          // Detect going over and swap a texture.
-          // This should in proper product be determined from some logical reel.
-          s.texture =
-            slotTextures[Math.floor(Math.random() * slotTextures.length)];
-          s.scale.x = s.scale.y = Math.min(
-            SYMBOL_SIZE / s.texture.width,
-            SYMBOL_SIZE / s.texture.height
-          );
-          s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
-        }
-      }
-    }
-  });
 
   // Listen for animate update.
   app.ticker.add(async () => {

@@ -1,9 +1,10 @@
 import { AnimatedSprite, Container, Rectangle } from "pixi.js";
-import { coinAnimation } from "../Setup/config";
+import {
+  coinAnimation,
+  timeAnimationCoinFall,
+  totalCoinsInEmitter,
+} from "../Setup/config";
 import { gsap } from "gsap";
-
-const totTimeAnim = 3;
-const totalCoins = 1000;
 
 export default class CoinsEmitter extends Container {
   private coins: {
@@ -52,12 +53,19 @@ export default class CoinsEmitter extends Container {
       width: 0,
     });
     timeline.to(coinAnim, {
-      y: this.boundsArea.height - coinAnim.height - 100,
+      y: this.boundsArea.height - coinAnim.height - 100 - 50,
       x: this.generateRandomXLand(coinAnim),
       width: 100,
       height: 100,
-      duration: totTimeAnim,
-      ease: "elastic",
+      duration: timeAnimationCoinFall * (4 / 5),
+      ease: "power3.in",
+    });
+    timeline.to(coinAnim, {
+      y: this.boundsArea.height - coinAnim.height - 100,
+      width: 100,
+      height: 100,
+      duration: timeAnimationCoinFall / 5,
+      ease: "bounce.out",
     });
     timeline.call(() => {
       if (this.running) {
@@ -84,7 +92,7 @@ export default class CoinsEmitter extends Container {
   async setUpAnimationCoins() {
     this.coins = [];
     this.removeChildren();
-    for (let i = 0; i < totalCoins; i++) {
+    for (let i = 0; i < totalCoinsInEmitter; i++) {
       this.addCoin();
     }
   }

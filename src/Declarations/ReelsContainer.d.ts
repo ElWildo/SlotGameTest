@@ -4,7 +4,6 @@ interface Reel {
   symbols: Sprite[];
   position: number;
   previousPosition: number;
-  blur: BlurFilter;
 }
 
 interface TwinTo {

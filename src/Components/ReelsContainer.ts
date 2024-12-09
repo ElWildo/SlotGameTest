@@ -1,25 +1,30 @@
-import { BlurFilter, Container, Sprite } from "pixi.js";
+import { Container, Sprite } from "pixi.js";
 import { Reel, TwinTo } from "../Declarations/ReelsContainer";
 import {
-  REEL_SYM_HEIGHT,
-  REEL_SYM_WIDTH,
+  REELS_AMOUNT,
+  SYM_PER_REEL_AMOUNT,
   REEL_WIDTH,
   slotTextures,
+  spinPerReelTest,
   SYMBOL_SIZE,
   WinCount,
+  spinTime,
+  bounceBackReel,
 } from "../Setup/config";
+import { gsap } from "gsap";
 
 export default class ReelsContainer extends Container {
   public reels: Reel[] = [];
   public tweening: TwinTo[] = [];
   private running = false;
+  private results: Sprite[][] = [];
   private calculateWin: (count: WinCount) => void;
   constructor(calculateWin: (count: WinCount) => void) {
     super();
     this.pivot.x = this.width / 2;
     this.pivot.y = this.height / 2;
     this.calculateWin = calculateWin;
-    for (let i = 0; i < REEL_SYM_WIDTH; i++) {
+    for (let i = 0; i < REELS_AMOUNT; i++) {
       const rc = new Container();
 
       rc.x = i * REEL_WIDTH;
@@ -30,19 +35,13 @@ export default class ReelsContainer extends Container {
         symbols: [],
         position: 0,
         previousPosition: 0,
-        blur: new BlurFilter(),
       };
 
-      reel.blur.blurX = 0;
-      reel.blur.blurY = 0;
-      rc.filters = [reel.blur];
-
       // Build the symbols
-      for (let j = 0; j < REEL_SYM_HEIGHT; j++) {
+      for (let j = 0; j < SYM_PER_REEL_AMOUNT; j++) {
         const symbol = new Sprite(
           slotTextures[Math.floor(Math.random() * slotTextures.length)]
         );
-        // Scale the symbol to fit symbol area.
 
         symbol.y = j * SYMBOL_SIZE;
         symbol.scale.x = symbol.scale.y = Math.min(
@@ -57,55 +56,120 @@ export default class ReelsContainer extends Container {
     }
   }
 
-  tweenTo(
-    object: Reel,
-    property: "position",
-    target: number,
-    time: number,
-    easing: (n: number) => number,
-    oncomplete: (() => void) | null
-  ) {
-    const tween: TwinTo = {
-      object,
-      property,
-      propertyBeginValue: object[property],
-      target,
-      easing,
-      time,
-      complete: oncomplete,
-      start: Date.now(),
-    };
-
-    this.tweening.push(tween);
-
-    return tween;
-  }
-
   // Function to start playing.
-  startPlay = () => {
+  startPlay = async () => {
     if (this.running) return;
     this.running = true;
+    this.results = [];
+
+    await mockServerResponse().then((results) =>
+      this.updateResults(results as Sprite[][])
+    );
 
     for (let i = 0; i < this.reels.length; i++) {
       const r = this.reels[i];
-      const target = r.position + 10 + i * 5;
-      const time = 2500 + i * 600;
-
-      this.tweenTo(
-        r,
-        "position",
-        target,
-        time,
-        this.backout(0.5),
-        i === this.reels.length - 1 ? this.reelsComplete : null
+      const target = spinPerReelTest[i] * r.container.height;
+      const containerWrap = gsap.utils.wrap(
+        r.container.y - SYMBOL_SIZE,
+        r.container.y + r.container.height - SYMBOL_SIZE
       );
+      const animation = gsap.timeline();
+      const blur = gsap.timeline();
+      blur.to(r.symbols, {
+        ease: "power4.in",
+        duration: spinTime / 3,
+        pixi: { blurY: 15 * ((i + 1) / 2) },
+      });
+      animation.to(r.symbols, {
+        y: `+=${target}`,
+        duration: spinTime * (4 / 5),
+        modifiers: {
+          y: gsap.utils.unitize(containerWrap),
+        },
+        ease: "power4.in",
+        onComplete: () => {
+          if (i === this.reels.length - 1) {
+            animation.clear();
+            blur.clear();
+            this.updateReels();
+          }
+        },
+      });
     }
   };
 
-  async results() {
+  updateReels() {
+    for (let reel = 0; reel < this.reels.length; reel++) {
+      for (let i = 0; i < this.reels[reel].symbols.length; i++) {
+        this.results[reel][i].y = i * SYMBOL_SIZE;
+        this.results[reel][i].scale = this.reels[reel].symbols[i].scale;
+        this.results[reel][i].x = this.reels[reel].symbols[i].x;
+        this.reels[reel].container.removeChild(this.reels[reel].symbols[i]);
+        this.reels[reel].symbols[i] = this.results[reel][i];
+        this.reels[reel].container.addChild(this.reels[reel].symbols[i]);
+      }
+      console.log(this.reels[reel].container.height);
+      const animation = gsap.timeline();
+      const blur = gsap.timeline();
+      const target = spinPerReelTest[reel] * this.reels[reel].container.height;
+
+      const containerWrap = gsap.utils.wrap(
+        this.reels[reel].container.y - SYMBOL_SIZE,
+        this.reels[reel].container.y +
+          this.reels[reel].container.height -
+          SYMBOL_SIZE
+      );
+
+      blur.fromTo(
+        this.reels[reel].symbols,
+        {
+          pixi: { blurY: 15 * ((reel + 1) / 2) },
+        },
+        {
+          ease: "power4.out",
+          duration: spinTime,
+          pixi: { blurY: 0 },
+        }
+      );
+      animation.to(this.reels[reel].symbols, {
+        y: `+=${target + bounceBackReel}`,
+        duration: spinTime * (3 / 5),
+        modifiers: {
+          y: gsap.utils.unitize(containerWrap),
+        },
+        ease: "sin.out",
+      });
+      animation.to(this.reels[reel].symbols, {
+        y: `-=${bounceBackReel}`,
+        duration: spinTime * (2 / 5),
+        ease: "elastic",
+        modifiers: {
+          y: gsap.utils.unitize(containerWrap),
+        },
+        onComplete: () => {
+          if (reel === this.reels.length - 1) {
+            animation.clear();
+            blur.clear();
+            this.reelsComplete();
+          }
+        },
+      });
+    }
+  }
+
+  updateResults(res: Sprite[][]) {
+    for (let i = 0; i < this.reels.length; i++) {
+      const reelArray = [];
+      for (let j = 0; j < this.reels[i].symbols.length; j++) {
+        reelArray.push(res[i][j]);
+      }
+      this.results.push(reelArray);
+    }
+  }
+
+  calculateOutcome() {
     const rows = this.reels[0].symbols
       .map((symbol: Sprite) => symbol.position.y)
-      .sort((a, b) => a - b)
       .slice(1);
 
     const countRes: WinCount = { "2": 0, "3": 0, "4": 0, "5": 0 };
@@ -114,8 +178,8 @@ export default class ReelsContainer extends Container {
       let lastsymb: string | undefined = undefined;
       let count: number = 0;
       for (let i = 0; i < this.reels.length; i++) {
-        const symb = await this.reels[i].symbols.find(
-          (symbol) => Math.floor(symbol.position.y) == rows[index]
+        const symb = this.reels[i].symbols.find(
+          (symbol) => Math.floor(symbol.position.y) == Math.floor(rows[index])
         )?.texture.label;
         if (!symb) console.log("symb undefined");
         if (!lastsymb || lastsymb != symb) {
@@ -136,14 +200,25 @@ export default class ReelsContainer extends Container {
   }
 
   // Reels done handler.
-  reelsComplete = async () => {
-    await this.results();
+  reelsComplete() {
+    this.calculateOutcome();
     this.running = false;
-  };
-
-  // Backout function from tweenjs.
-  // https://github.com/CreateJS/TweenJS/blob/master/src/tweenjs/Ease.js
-  backout(amount: number) {
-    return (t: number) => --t * t * ((amount + 1) * t + amount) + 1;
   }
 }
+
+const mockServerResponse = () => {
+  const reelRes: Sprite[][] = [];
+  for (let reel = 0; reel < REELS_AMOUNT; reel++) {
+    const reelArray = [];
+    for (let sym = 0; sym < SYM_PER_REEL_AMOUNT; sym++) {
+      reelArray.push(
+        new Sprite(
+          slotTextures[Math.floor(Math.random() * slotTextures.length)]
+        )
+      );
+    }
+    reelRes.push(reelArray);
+  }
+  setInterval(() => {}, 20);
+  return Promise.resolve(reelRes);
+};
