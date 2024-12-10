@@ -13,9 +13,13 @@ export const spinTime = 5;
 export const timeAnimationCoinFall = 3;
 export const totalCoinsInEmitter = 1000;
 export const bounceBackReel = 50;
+export const winAnimationTime = 3000;
 
 await Assets.load([
   "./assets/coin/coinAnimation.json",
+  "./assets/celebration/rotated_glow.png",
+  "./assets/bigWin/bigwin_title.png",
+  "./assets/bigWin/megawin_title.png",
   "./assets/symbols/s01.png",
   "./assets/symbols/s02.png",
   "./assets/symbols/s03.png",
@@ -40,6 +44,10 @@ export const slotTextures = [
   Texture.from("./assets/symbols/s09.png"),
 ];
 
+export const winTextAssets = {
+  bigWin: Texture.from("./assets/bigWin/bigwin_title.png"),
+  megaWin: Texture.from("./assets/bigWin/megawin_title.png"),
+};
 const coinAnim = await Assets.cache.get("./assets/coin/coinAnimation.json").data
   .animations["win_coin_seq"];
 

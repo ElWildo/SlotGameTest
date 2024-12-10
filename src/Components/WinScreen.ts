@@ -1,44 +1,156 @@
-import { Container, Rectangle } from "pixi.js";
+import { Container, Rectangle, Sprite, Text } from "pixi.js";
 import CoinsEmitter from "./CoinsEmitter";
-
+import { getStyle } from "../utils/utils";
+import { gsap } from "gsap";
+import { winAnimationTime, winTextAssets } from "../Setup/config";
 export default class WinScreen extends Container {
   private coinsEmitter: CoinsEmitter | null = null;
+  private winText: Text | null = null;
+  private bigWinText: Sprite | null = null;
+  private megaWinText: Sprite | null = null;
   constructor(boundsArea: Rectangle) {
     super();
     this.boundsArea = boundsArea;
     this.coinsEmitter = new CoinsEmitter(this.boundsArea);
+    this.winText = new Text({ text: "You Won!", style: getStyle(120) });
+    this.winText.position.set(
+      boundsArea.width / 2 - this.winText.width / 2,
+      boundsArea.height + this.winText.height / 2
+    );
+    this.bigWinText = new Sprite(winTextAssets.bigWin);
+    this.bigWinText.position.set(
+      boundsArea.width / 2 - this.bigWinText.width / 2,
+      boundsArea.height + this.bigWinText.height / 2
+    );
+    this.megaWinText = new Sprite(winTextAssets.megaWin);
+    this.megaWinText.position.set(
+      boundsArea.width / 2 - this.megaWinText.width / 2,
+      boundsArea.height + this.megaWinText.height / 2
+    );
+
     this.addChild(this.coinsEmitter);
+    this.addChild(this.winText);
+    this.addChild(this.bigWinText);
+    this.addChild(this.megaWinText);
   }
 
-  playInSmall() {
-    if (this.coinsEmitter) this.coinsEmitter.playAnimationCoins();
-    console.log("Slide small win in");
-    return Promise.resolve();
+  winTextSlideIn(text: Sprite | Text | null) {
+    if (text) {
+      gsap.to(text, {
+        y: this.boundsArea.height / 2 - text.height / 2,
+        duration: 1,
+        ease: "bounce.out",
+      });
+    }
   }
-  playOutSmall() {
-    console.log("Slide small win out");
-    setTimeout(() => {
-      if (this.coinsEmitter) this.coinsEmitter.stopAnimationCoins();
-    }, 5000);
+  winTextSlideOut(text: Sprite | Text | null) {
+    if (text) {
+      gsap.to(text, {
+        y: this.boundsArea.height + text.height / 2,
+        ease: "bounce.out",
+      });
+    }
   }
 
-  playInBig() {
-    if (this.coinsEmitter) this.coinsEmitter.playAnimationCoins();
-    console.log("Slide Big win in");
-    return Promise.resolve();
+  playInCoin(delay: number) {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        if (this.coinsEmitter) this.coinsEmitter.playAnimationCoins();
+        console.log("Start Coins emission");
+        resolve();
+      }, delay);
+    });
   }
-  playOutBig() {
-    console.log("Slide Big win out");
-    setTimeout(() => {
-      if (this.coinsEmitter) this.coinsEmitter.stopAnimationCoins();
-    }, 10000);
+  playOutCoin(delay: number) {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        if (this.coinsEmitter) this.coinsEmitter.stopAnimationCoins();
+        console.log("Stop Coins emission");
+        resolve();
+      }, delay);
+    });
+  }
+  playInSmall(delay: number) {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.winTextSlideIn(this.winText);
+        console.log("Slide small win in");
+        resolve();
+      }, delay);
+    });
+  }
+  playOutSmall(delay: number) {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.winTextSlideOut(this.winText);
+        console.log("Slide small win out");
+        resolve();
+      }, delay);
+    });
+  }
+
+  playInBig(delay: number) {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.winTextSlideIn(this.bigWinText);
+        console.log("Slide Big win in");
+        resolve();
+      }, delay);
+    });
+  }
+  playOutBig(delay: number) {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.winTextSlideOut(this.bigWinText);
+        console.log("Slide Big win out");
+        resolve();
+      }, delay);
+    });
+  }
+
+  playInMega(delay: number) {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.winTextSlideIn(this.megaWinText);
+        console.log("Slide Mega win in");
+        resolve();
+      }, delay);
+    });
+  }
+  playOutMega(delay: number) {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.winTextSlideOut(this.megaWinText);
+        console.log("Slide Mega win out");
+        resolve();
+      }, delay);
+    });
   }
 
   playSmallWinAnimation() {
-    this.playInSmall().then(() => this.playOutSmall());
+    this.playInCoin(0)
+      .then(() => this.playInSmall(100))
+      .then(() => this.playOutCoin(winAnimationTime - 1000))
+      .then(() => this.playOutSmall(winAnimationTime - 500));
   }
 
   playBigWinAnimation() {
-    this.playInBig().then(() => this.playOutBig());
+    this.playInCoin(0)
+      .then(() => this.playInSmall(100))
+      .then(() => this.playInBig(1000))
+      .then(() => this.playOutSmall(1000))
+      .then(() => this.playOutCoin(winAnimationTime - 1000))
+      .then(() => this.playOutBig(winAnimationTime - 500));
+  }
+
+  playMegaWinAnimation() {
+    this.playInCoin(0)
+      .then(() => this.playInSmall(100))
+      .then(() => this.playInBig(1000))
+      .then(() => this.playOutSmall(1000))
+      .then(() => this.playInMega(1000))
+      .then(() => this.playOutBig(1000))
+      .then(() => this.playOutCoin(winAnimationTime - 1000))
+      .then(() => this.playOutMega(winAnimationTime - 500));
   }
 }

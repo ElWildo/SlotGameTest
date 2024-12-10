@@ -1,10 +1,7 @@
 import {
   Application,
-  Color,
   Graphics,
   Text,
-  TextStyle,
-  FillGradient,
   Rectangle,
   BlurFilter,
   ColorMatrixFilter,
@@ -17,6 +14,7 @@ import { REEL_WIDTH, SYMBOL_SIZE, WinCount } from "./Setup/config";
 import WinScreen from "./Components/WinScreen";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
+import { getStyle } from "./utils/utils";
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI({
   DisplayObject: Container,
@@ -31,7 +29,6 @@ PixiPlugin.registerPIXI({
   const app = new Application();
   await app.init({
     resizeTo: window,
-    resolution: window.innerWidth / window.innerHeight,
     sharedTicker: true,
   });
 
@@ -39,6 +36,10 @@ PixiPlugin.registerPIXI({
   window.addEventListener("resize", function () {
     app.renderer.resize(window.innerWidth, window.innerHeight);
   });
+
+  app.stage.pivot.set(app.canvas.width / 2, app.canvas.height / 2);
+  app.stage.x = app.canvas.width / 2;
+  app.stage.y = app.canvas.height / 2;
 
   // Build the reels
   const reelsContainer = new ReelsContainer(isWin);
@@ -59,38 +60,7 @@ PixiPlugin.registerPIXI({
     .rect(0, SYMBOL_SIZE * 3 + margin, app.screen.width, margin)
     .fill({ color: 0x0 });
 
-  // Create gradient fill
-  const fill = new FillGradient(0, 0, 0, 36 * 1.7);
-
-  const colors = [0xffffff, 0x00ff99].map((color) =>
-    Color.shared.setValue(color).toNumber()
-  );
-
-  colors.forEach((number, index) => {
-    const ratio = index / colors.length;
-
-    fill.addColorStop(ratio, number);
-  });
-
-  // Add play text
-  const style = new TextStyle({
-    fontFamily: "Arial",
-    fontSize: 36,
-    fontStyle: "italic",
-    fontWeight: "bold",
-    fill: { fill },
-    stroke: { color: 0x4a1850, width: 5 },
-    dropShadow: {
-      color: 0x000000,
-      angle: Math.PI / 6,
-      blur: 4,
-      distance: 6,
-    },
-    wordWrap: true,
-    wordWrapWidth: 440,
-  });
-
-  const playText = new Text({ text: "Spin the wheels!", style });
+  const playText = new Text({ text: "Spin the wheels!", style: getStyle(36) });
 
   playText.x = Math.round((bottom.width - playText.width) / 2);
   playText.y =
@@ -98,7 +68,7 @@ PixiPlugin.registerPIXI({
   bottom.addChild(playText);
 
   // Add header text
-  const headerText = new Text({ text: "FUN SLOT GAME", style });
+  const headerText = new Text({ text: "FUN SLOT GAME", style: getStyle(36) });
 
   headerText.x = Math.round((top.width - headerText.width) / 2);
   headerText.y = Math.round((margin - headerText.height) / 2);
@@ -117,12 +87,14 @@ PixiPlugin.registerPIXI({
   //Set Win Screens
 
   const winScreen = new WinScreen(
-    new Rectangle(0, 0, app.screen.width, app.screen.height)
+    new Rectangle(0, 0, app.canvas.width, app.canvas.height)
   );
   app.stage.addChild(winScreen);
 
   function isWin(count: WinCount) {
-    if (count["3"] > 0) {
+    if (count["4"] > 0 || count["5"] > 0) {
+      winScreen.playMegaWinAnimation();
+    } else if (count["3"] > 0) {
       winScreen.playBigWinAnimation();
     } else if (count["2"] > 0) {
       winScreen.playSmallWinAnimation();
