@@ -57,18 +57,6 @@ PixiPlugin.registerPIXI({
   console.log("screenBounds.width: " + screenBounds.width);
   console.log("ratio: " + ratio);
 
-  const reelBounds = new Rectangle(
-    0,
-    0,
-    SYMBOL_SIZE * REELS_AMOUNT,
-    SYMBOL_SIZE * (SYM_PER_REEL_AMOUNT - 1)
-  );
-
-  // Build the reels
-  new Rectangle();
-  const reelsContainer = new ReelsContainer(isWin, reelBounds);
-
-  app.stage.addChild(reelsContainer);
   const margin = 110 * ratio;
 
   const top = new Container();
@@ -76,30 +64,44 @@ PixiPlugin.registerPIXI({
 
   const playText = new Text({ text: "Spin the wheels!", style: getStyle(36) });
 
-  // playText.position = bottom.pivot;
-  playText.x = Math.round(screenBounds.width / 2) - playText.width / 2;
-  playText.y = screenBounds.height - margin - playText.height / 2;
+  playText.x =
+    Math.round(screenBounds.width / 2) - (playText.width * ratio) / 2;
+  playText.y = Math.round(
+    screenBounds.height - margin + (playText.height * ratio) / 2
+  );
+  playText.scale = ratio;
   bottom.addChild(playText);
 
   // Add header text
   const headerText = new Text({ text: "FUN SLOT GAME", style: getStyle(36) });
 
-  headerText.x = Math.round((screenBounds.width - headerText.width) / 2);
-  headerText.y = headerText.height / 2;
+  headerText.x = Math.round(
+    (screenBounds.width - headerText.width * ratio) / 2
+  );
+  headerText.y = Math.round((headerText.height / 2) * ratio);
+  headerText.scale = ratio;
   top.addChild(headerText);
 
-  reelsContainer.setSize(
-    REEL_WIDTH * REELS_AMOUNT * ratio,
-    SYMBOL_SIZE * SYM_PER_REEL_AMOUNT * ratio -
-      (headerText.height + top.height) -
-      (bottom.height + playText.height)
+  // Build the reels
+  const reelBounds = new Rectangle(
+    0,
+    0,
+    SYMBOL_SIZE * REELS_AMOUNT,
+    SYMBOL_SIZE * (SYM_PER_REEL_AMOUNT - 1)
   );
+  const reelsContainer = new ReelsContainer(isWin, reelBounds);
+
+  app.stage.addChild(reelsContainer);
 
   // Build top & bottom covers and position reelContainer
 
-  reelsContainer.y = headerText.height + top.height / 2;
-  reelsContainer.x =
-    screenBounds.width / 2 - (REEL_WIDTH * REELS_AMOUNT * ratio) / 2;
+  reelsContainer.scale = ratio;
+  reelsContainer.y = Math.round(
+    screenBounds.height / 2 - (reelBounds.height / 2) * ratio
+  );
+  reelsContainer.x = Math.round(
+    screenBounds.width / 2 - (REEL_WIDTH * REELS_AMOUNT * ratio) / 2
+  );
 
   app.stage.addChild(top);
   app.stage.addChild(bottom);
