@@ -10,7 +10,13 @@ import {
 import "./style.css";
 import ReelsContainer from "./Components/ReelsContainer";
 import { TwinTo } from "./Declarations/ReelsContainer";
-import { REEL_WIDTH, SYMBOL_SIZE, WinCount } from "./Setup/config";
+import {
+  REEL_WIDTH,
+  REELS_AMOUNT,
+  SYM_PER_REEL_AMOUNT,
+  SYMBOL_SIZE,
+  WinCount,
+} from "./Setup/config";
 import WinScreen from "./Components/WinScreen";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
@@ -28,7 +34,10 @@ PixiPlugin.registerPIXI({
 (async () => {
   const app = new Application();
   await app.init({
-    resizeTo: window,
+    // resizeTo: window,
+    width: 1280,
+    height: 720,
+
     sharedTicker: true,
   });
 
@@ -37,42 +46,60 @@ PixiPlugin.registerPIXI({
     app.renderer.resize(window.innerWidth, window.innerHeight);
   });
 
-  app.stage.pivot.set(app.canvas.width / 2, app.canvas.height / 2);
-  app.stage.x = app.canvas.width / 2;
-  app.stage.y = app.canvas.height / 2;
+  const screenBounds = new Rectangle(0, 0, app.canvas.width, app.canvas.height);
+
+  app.stage.boundsArea = screenBounds;
+  const ratio =
+    window.innerWidth / screenBounds.width < 1
+      ? window.innerWidth / screenBounds.width
+      : screenBounds.width / window.innerWidth;
+  console.log("window.innerWidth: " + window.innerWidth);
+  console.log("screenBounds.width: " + screenBounds.width);
+  console.log("ratio: " + ratio);
+
+  const reelBounds = new Rectangle(
+    0,
+    0,
+    SYMBOL_SIZE * REELS_AMOUNT,
+    SYMBOL_SIZE * (SYM_PER_REEL_AMOUNT - 1)
+  );
 
   // Build the reels
-  const reelsContainer = new ReelsContainer(isWin);
+  new Rectangle();
+  const reelsContainer = new ReelsContainer(isWin, reelBounds);
 
   app.stage.addChild(reelsContainer);
+  const margin = 110 * ratio;
 
-  // Build top & bottom covers and position reelContainer
-  const margin = (app.screen.height - SYMBOL_SIZE * 3) / 2;
-
-  reelsContainer.y = margin;
-  reelsContainer.x = Math.round(
-    (app.screen.width + reelsContainer.width) / 2 - REEL_WIDTH * 5
-  );
-  const top = new Graphics()
-    .rect(0, 0, app.screen.width, margin)
-    .fill({ color: 0x0 });
-  const bottom = new Graphics()
-    .rect(0, SYMBOL_SIZE * 3 + margin, app.screen.width, margin)
-    .fill({ color: 0x0 });
+  const top = new Container();
+  const bottom = new Container();
 
   const playText = new Text({ text: "Spin the wheels!", style: getStyle(36) });
 
-  playText.x = Math.round((bottom.width - playText.width) / 2);
-  playText.y =
-    app.screen.height - margin + Math.round((margin - playText.height) / 2);
+  // playText.position = bottom.pivot;
+  playText.x = Math.round(screenBounds.width / 2) - playText.width / 2;
+  playText.y = screenBounds.height - margin - playText.height / 2;
   bottom.addChild(playText);
 
   // Add header text
   const headerText = new Text({ text: "FUN SLOT GAME", style: getStyle(36) });
 
-  headerText.x = Math.round((top.width - headerText.width) / 2);
-  headerText.y = Math.round((margin - headerText.height) / 2);
+  headerText.x = Math.round((screenBounds.width - headerText.width) / 2);
+  headerText.y = headerText.height / 2;
   top.addChild(headerText);
+
+  reelsContainer.setSize(
+    REEL_WIDTH * REELS_AMOUNT * ratio,
+    SYMBOL_SIZE * SYM_PER_REEL_AMOUNT * ratio -
+      (headerText.height + top.height) -
+      (bottom.height + playText.height)
+  );
+
+  // Build top & bottom covers and position reelContainer
+
+  reelsContainer.y = headerText.height + top.height / 2;
+  reelsContainer.x =
+    screenBounds.width / 2 - (REEL_WIDTH * REELS_AMOUNT * ratio) / 2;
 
   app.stage.addChild(top);
   app.stage.addChild(bottom);
@@ -86,10 +113,8 @@ PixiPlugin.registerPIXI({
 
   //Set Win Screens
 
-  const winScreen = new WinScreen(
-    new Rectangle(0, 0, app.canvas.width, app.canvas.height)
-  );
-  app.stage.addChild(winScreen);
+  const winScreen = new WinScreen(screenBounds);
+  // app.stage.addChild(winScreen);
 
   function isWin(count: WinCount) {
     if (count["4"] > 0 || count["5"] > 0) {

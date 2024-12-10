@@ -1,4 +1,11 @@
-import { Container, Sprite } from "pixi.js";
+import {
+  Container,
+  Graphics,
+  Optional,
+  Rectangle,
+  Size,
+  Sprite,
+} from "pixi.js";
 import { Reel, TwinTo } from "../Declarations/ReelsContainer";
 import {
   REELS_AMOUNT,
@@ -18,17 +25,25 @@ export default class ReelsContainer extends Container {
   public tweening: TwinTo[] = [];
   private running = false;
   private results: Sprite[][] = [];
+  private maskContainer: Container | null = null;
   private calculateWin: (count: WinCount) => void;
-  constructor(calculateWin: (count: WinCount) => void) {
+  constructor(calculateWin: (count: WinCount) => void, boundsArea: Rectangle) {
     super();
     this.pivot.x = this.width / 2;
     this.pivot.y = this.height / 2;
     this.calculateWin = calculateWin;
+    let mask = new Graphics()
+      .rect(0, 0, boundsArea.width, boundsArea.height)
+      .fill({ color: 0x0 });
+    this.maskContainer = new Container();
+    this.maskContainer.mask = mask;
+    this.maskContainer.addChild(mask);
+    this.addChild(this.maskContainer);
     for (let i = 0; i < REELS_AMOUNT; i++) {
       const rc = new Container();
 
       rc.x = i * REEL_WIDTH;
-      this.addChild(rc);
+      this.maskContainer.addChild(rc);
 
       const reel: Reel = {
         container: rc,
