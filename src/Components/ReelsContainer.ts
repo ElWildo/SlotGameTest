@@ -169,7 +169,7 @@ export default class ReelsContainer extends Container {
   calculateOutcome() {
     const rows = this.reels[0].symbols
       .map((symbol: Sprite) => symbol.position.y)
-      .slice(1);
+      .slice(0, -1);
 
     const countRes: WinCount = { "2": 0, "3": 0, "4": 0, "5": 0 };
 
