@@ -114,7 +114,7 @@ PixiPlugin.registerPIXI({
   //Set Win Screens
 
   const winScreen = new WinScreen(screenBounds);
-  // app.stage.addChild(winScreen);
+  app.stage.addChild(winScreen);
 
   function isWin(count: WinCount) {
     if (count["4"] > 0 || count["5"] > 0) {

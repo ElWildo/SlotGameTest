@@ -12,7 +12,7 @@ export default class WinScreen extends Container {
     super();
     this.boundsArea = boundsArea;
     this.coinsEmitter = new CoinsEmitter(this.boundsArea);
-    this.winText = new Text({ text: "You Won!", style: getStyle(120) });
+    this.winText = new Text({ text: "Win!", style: getStyle(120) });
     this.winText.position.set(
       boundsArea.width / 2 - this.winText.width / 2,
       boundsArea.height + this.winText.height / 2
