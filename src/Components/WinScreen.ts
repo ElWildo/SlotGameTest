@@ -56,7 +56,6 @@ export default class WinScreen extends Container {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         if (this.coinsEmitter) this.coinsEmitter.playAnimationCoins();
-        console.log("Start Coins emission");
         resolve();
       }, delay);
     });
@@ -65,7 +64,6 @@ export default class WinScreen extends Container {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         if (this.coinsEmitter) this.coinsEmitter.stopAnimationCoins();
-        console.log("Stop Coins emission");
         resolve();
       }, delay);
     });
@@ -74,7 +72,6 @@ export default class WinScreen extends Container {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         this.winTextSlideIn(this.winText);
-        console.log("Slide small win in");
         resolve();
       }, delay);
     });
@@ -83,7 +80,6 @@ export default class WinScreen extends Container {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         this.winTextSlideOut(this.winText);
-        console.log("Slide small win out");
         resolve();
       }, delay);
     });
@@ -93,7 +89,6 @@ export default class WinScreen extends Container {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         this.winTextSlideIn(this.bigWinText);
-        console.log("Slide Big win in");
         resolve();
       }, delay);
     });
@@ -102,7 +97,6 @@ export default class WinScreen extends Container {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         this.winTextSlideOut(this.bigWinText);
-        console.log("Slide Big win out");
         resolve();
       }, delay);
     });
@@ -112,7 +106,6 @@ export default class WinScreen extends Container {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         this.winTextSlideIn(this.megaWinText);
-        console.log("Slide Mega win in");
         resolve();
       }, delay);
     });
@@ -121,7 +114,6 @@ export default class WinScreen extends Container {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         this.winTextSlideOut(this.megaWinText);
-        console.log("Slide Mega win out");
         resolve();
       }, delay);
     });

@@ -108,7 +108,6 @@ export default class ReelsContainer extends Container {
         this.reels[reel].symbols[i] = this.results[reel][i];
         this.reels[reel].container.addChild(this.reels[reel].symbols[i]);
       }
-      console.log(this.reels[reel].container.height);
       const animation = gsap.timeline();
       const blur = gsap.timeline();
       const target = spinPerReelTest[reel] * this.reels[reel].container.height;
