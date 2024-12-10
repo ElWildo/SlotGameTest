@@ -1,11 +1,4 @@
-import {
-  Container,
-  Graphics,
-  Optional,
-  Rectangle,
-  Size,
-  Sprite,
-} from "pixi.js";
+import { Container, Graphics, Rectangle, Sprite } from "pixi.js";
 import { Reel, TwinTo } from "../Declarations/ReelsContainer";
 import {
   REELS_AMOUNT,
