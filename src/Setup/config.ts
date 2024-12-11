@@ -18,9 +18,7 @@ export const winAnimationTime = 3000;
 await Assets.load([
   "./assets/coin/coinAnimation.json",
   "./assets/celebration/rotated_glow.png",
-  "./assets/celebration/flare.png",
   "./assets/celebration/shine.png",
-  "./assets/celebration/smoke.png",
   "./assets/bigWin/bigwin_title.png",
   "./assets/bigWin/megawin_title.png",
   "./assets/symbols/s01.png",

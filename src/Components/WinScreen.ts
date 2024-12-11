@@ -8,19 +8,11 @@ export default class WinScreen extends Container {
   private winText: Text | null = null;
   private bigWinText: Sprite | null = null;
   private megaWinText: Sprite | null = null;
-  private flare: { node: Sprite | null; timeline: gsap.core.Timeline } = {
-    node: null,
-    timeline: gsap.timeline(),
-  };
   private glow: { node: Sprite | null; timeline: gsap.core.Timeline } = {
     node: null,
     timeline: gsap.timeline(),
   };
   private shine: { node: Sprite | null; timeline: gsap.core.Timeline } = {
-    node: null,
-    timeline: gsap.timeline(),
-  };
-  private smoke: { node: Sprite | null; timeline: gsap.core.Timeline } = {
     node: null,
     timeline: gsap.timeline(),
   };
@@ -46,8 +38,6 @@ export default class WinScreen extends Container {
       boundsArea.width / 2,
       boundsArea.height + this.megaWinText.height / 2
     );
-    this.flare.node = new Sprite(FXs.flare);
-    // this.flare.node.scale = 0;
     this.glow.node = new Sprite(FXs.glow);
     this.glow.node.position.set(boundsArea.width / 2, boundsArea.height / 2);
     this.glow.node.anchor.set(0.5, 0.5);
@@ -56,8 +46,6 @@ export default class WinScreen extends Container {
     this.shine.node.position.set(boundsArea.width / 2, boundsArea.height / 2);
     this.shine.node.anchor.set(0.5, 0.5);
     this.shine.node.scale = 0;
-    this.smoke.node = new Sprite(FXs.smoke);
-    // this.smoke.node.scale = 0;
 
     this.addChild(this.glow.node);
     this.addChild(this.shine.node);
