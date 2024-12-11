@@ -90,7 +90,7 @@ export default class ReelsContainer extends Container {
       });
       animation.to(r.symbols, {
         y: `+=${target}`,
-        duration: spinTime * (4 / 5),
+        duration: spinTime / 2,
         modifiers: {
           y: gsap.utils.unitize(containerWrap),
         },
