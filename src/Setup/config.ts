@@ -1,4 +1,4 @@
-import { Assets, Texture } from "pixi.js";
+import { Assets, Texture, TextureSource } from "pixi.js";
 
 export const REEL_WIDTH = 155;
 export const SYMBOL_SIZE = 150;
@@ -15,7 +15,18 @@ export const totalCoinsInEmitter = 1000;
 export const bounceBackReel = 50;
 export const winAnimationTime = 3000;
 
-await Assets.load([
+let slotTextures: Texture<TextureSource<any>>[] = [];
+let coinAnimation: Texture<TextureSource<any>>[] = [];
+let FXs: {
+  glow?: Texture<TextureSource<any>>;
+  shine?: Texture<TextureSource<any>>;
+} = {};
+let winTextAssets: {
+  bigWin?: Texture<TextureSource<any>>;
+  megaWin?: Texture<TextureSource<any>>;
+} = {};
+let coinAnim: string[] = [];
+const spritesLoad = Assets.load([
   "./assets/coin/coinAnimation.json",
   "./assets/celebration/rotated_glow.png",
   "./assets/celebration/shine.png",
@@ -31,36 +42,34 @@ await Assets.load([
   "./assets/symbols/s08.png",
   "./assets/symbols/s09.png",
 ]);
+spritesLoad.then(() => {
+  slotTextures = [
+    Texture.from("./assets/symbols/s01.png"),
+    Texture.from("./assets/symbols/s01.png"),
+    Texture.from("./assets/symbols/s02.png"),
+    Texture.from("./assets/symbols/s03.png"),
+    Texture.from("./assets/symbols/s04.png"),
+    Texture.from("./assets/symbols/s05.png"),
+    Texture.from("./assets/symbols/s06.png"),
+    Texture.from("./assets/symbols/s07.png"),
+    Texture.from("./assets/symbols/s08.png"),
+    Texture.from("./assets/symbols/s09.png"),
+  ];
 
-export const slotTextures = [
-  Texture.from("./assets/symbols/s01.png"),
-  Texture.from("./assets/symbols/s01.png"),
-  Texture.from("./assets/symbols/s02.png"),
-  Texture.from("./assets/symbols/s03.png"),
-  Texture.from("./assets/symbols/s04.png"),
-  Texture.from("./assets/symbols/s05.png"),
-  Texture.from("./assets/symbols/s06.png"),
-  Texture.from("./assets/symbols/s07.png"),
-  Texture.from("./assets/symbols/s08.png"),
-  Texture.from("./assets/symbols/s09.png"),
-];
+  coinAnim = Assets.cache.get("./assets/coin/coinAnimation.json").data
+    .animations["win_coin_seq"];
 
-export const FXs = {
-  flare: Texture.from("./assets/celebration/flare.png"),
-  glow: Texture.from("./assets/celebration/rotated_glow.png"),
-  shine: Texture.from("./assets/celebration/shine.png"),
-  smoke: Texture.from("./assets/celebration/smoke.png"),
-};
-export const winTextAssets = {
-  bigWin: Texture.from("./assets/bigWin/bigwin_title.png"),
-  megaWin: Texture.from("./assets/bigWin/megawin_title.png"),
-};
-const coinAnim = await Assets.cache.get("./assets/coin/coinAnimation.json").data
-  .animations["win_coin_seq"];
+  coinAnimation = coinAnim.map((seq_frame: string) => Texture.from(seq_frame));
 
-export const coinAnimation: Texture[] = coinAnim.map((seq_frame: string) =>
-  Texture.from(seq_frame)
-);
+  FXs = {
+    glow: Texture.from("./assets/celebration/rotated_glow.png"),
+    shine: Texture.from("./assets/celebration/shine.png"),
+  };
+  winTextAssets = {
+    bigWin: Texture.from("./assets/bigWin/bigwin_title.png"),
+    megaWin: Texture.from("./assets/bigWin/megawin_title.png"),
+  };
+});
 
 export interface WinCount {
   "2": number;
@@ -68,3 +77,5 @@ export interface WinCount {
   "4": number;
   "5": number;
 }
+
+export { slotTextures, coinAnimation, winTextAssets, FXs, spritesLoad };

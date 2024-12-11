@@ -53,8 +53,8 @@ export default class WinScreen extends Container {
     this.addChild(this.winText);
     this.addChild(this.bigWinText);
     this.addChild(this.megaWinText);
-    // this.addChild(this.flare.node);
-    // this.addChild(this.smoke.node);
+
+    this.playMegaWinAnimation;
   }
 
   startGlow() {

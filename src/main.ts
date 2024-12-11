@@ -13,6 +13,7 @@ import { TwinTo } from "./Declarations/ReelsContainer";
 import {
   REEL_WIDTH,
   REELS_AMOUNT,
+  spritesLoad,
   SYM_PER_REEL_AMOUNT,
   SYMBOL_SIZE,
   WinCount,
@@ -38,7 +39,7 @@ PixiPlugin.registerPIXI({
     height: 720,
     sharedTicker: true,
   });
-
+  await spritesLoad;
   document.body.appendChild(app.canvas);
   window.addEventListener("resize", function () {
     app.renderer.resize(window.innerWidth, window.innerHeight);
