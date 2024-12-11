@@ -32,11 +32,13 @@ PixiPlugin.registerPIXI({
   },
 });
 
+const verticalScreen = window.innerHeight > window.innerWidth;
+
 (async () => {
   const app = new Application();
   await app.init({
-    width: 1280,
-    height: 720,
+    width: verticalScreen ? 720 : 1280,
+    height: verticalScreen ? 1280 : 720,
     sharedTicker: true,
   });
   await spritesLoad;
