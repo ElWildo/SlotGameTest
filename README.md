@@ -21,7 +21,7 @@ Run `npm i` in the folder to install dependency
 ## Working Link
 
 Working site is available at github page:\
-[https://elwildo.github.io/PixiJs-Typescript-Tasks/](https://elwildo.github.io/SlotGameTest/)
+[https://elwildo.github.io/SlotGameTest/](https://elwildo.github.io/SlotGameTest/)
 
 ## Used Technologies
 
