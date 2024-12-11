@@ -84,6 +84,7 @@ export default class WinScreen extends Container {
 
   stopGlow() {
     const timeline = this.glow.timeline;
+    timeline.clear();
     timeline.to(this.glow.node, {
       pixi: { scaleY: 0, scaleX: 0 },
       duration: 2,
@@ -117,6 +118,7 @@ export default class WinScreen extends Container {
 
   stopShine() {
     const timeline = this.shine.timeline;
+    timeline.clear();
     timeline.to(this.shine.node, {
       pixi: { scaleY: 0, scaleX: 0 },
       duration: 2,
