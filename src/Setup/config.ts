@@ -1,7 +1,7 @@
 import { Assets, Texture } from "pixi.js";
 
-export const REEL_WIDTH = 260;
-export const SYMBOL_SIZE = 250;
+export const REEL_WIDTH = 155;
+export const SYMBOL_SIZE = 150;
 
 export const REELS_AMOUNT = 5;
 export const SYM_PER_REEL_AMOUNT = 4;
