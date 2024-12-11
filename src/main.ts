@@ -43,10 +43,6 @@ const verticalScreen = window.innerHeight > window.innerWidth;
   });
   await spritesLoad;
   document.body.appendChild(app.canvas);
-  window.addEventListener("resize", function () {
-    app.renderer.resize(window.innerWidth, window.innerHeight);
-  });
-
   const screenBounds = new Rectangle(0, 0, app.canvas.width, app.canvas.height);
 
   app.stage.boundsArea = screenBounds;
