@@ -9,7 +9,6 @@ import {
 } from "pixi.js";
 import "./style.css";
 import ReelsContainer from "./Components/ReelsContainer";
-import { TwinTo } from "./Declarations/ReelsContainer";
 import {
   REEL_WIDTH,
   REELS_AMOUNT,
@@ -48,6 +47,10 @@ const verticalScreen = window.innerHeight > window.innerWidth;
   app.stage.boundsArea = screenBounds;
 
   const margin = 100;
+
+  /**
+   * TODO: UI needs to be move into its own component
+   */
 
   const top = new Container();
   const bottom = new Container();
@@ -100,6 +103,9 @@ const verticalScreen = window.innerHeight > window.innerWidth;
   const winScreen = new WinScreen(screenBounds);
   app.stage.addChild(winScreen);
 
+  /**
+   * TODO: This should be in somewhere else. WinScreen or in some controller
+   */
   function isWin(count: WinCount) {
     if (count["4"] > 0 || count["5"] > 0) {
       winScreen.playMegaWinAnimation();
@@ -108,37 +114,5 @@ const verticalScreen = window.innerHeight > window.innerWidth;
     } else if (count["2"] > 0) {
       winScreen.playSmallWinAnimation();
     }
-  }
-
-  // Listen for animate update.
-  app.ticker.add(async () => {
-    const now = await Date.now();
-    const remove = [];
-
-    for (let i = 0; i < reelsContainer.tweening.length; i++) {
-      const t: TwinTo = reelsContainer.tweening[i];
-      const phase = Math.min(1, (now - t.start) / t.time);
-
-      t.object[t.property] = await lerp(
-        t.propertyBeginValue,
-        t.target,
-        await t.easing(phase)
-      );
-      if (phase === 1) {
-        t.object[t.property] = t.target;
-        if (t.complete) await t.complete();
-        remove.push(t);
-      }
-    }
-    for (let i = 0; i < remove.length; i++) {
-      reelsContainer.tweening.splice(
-        reelsContainer.tweening.indexOf(remove[i]),
-        1
-      );
-    }
-  });
-  // Basic lerp funtion.
-  function lerp(a1: number, a2: number, t: number) {
-    return a1 * (1 - t) + a2 * t;
   }
 })();

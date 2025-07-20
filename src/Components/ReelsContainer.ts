@@ -1,5 +1,5 @@
 import { Container, Graphics, Rectangle, Sprite } from "pixi.js";
-import { Reel, TwinTo } from "../Declarations/ReelsContainer";
+import { Reel } from "../Declarations/ReelsContainer";
 import {
   REELS_AMOUNT,
   SYM_PER_REEL_AMOUNT,
@@ -15,11 +15,11 @@ import { gsap } from "gsap";
 
 export default class ReelsContainer extends Container {
   public reels: Reel[] = [];
-  public tweening: TwinTo[] = [];
   private running = false;
   private results: Sprite[][] = [];
   private maskContainer: Container | null = null;
   private calculateWin: (count: WinCount) => void;
+
   constructor(calculateWin: (count: WinCount) => void, boundsArea: Rectangle) {
     super();
     this.pivot.x = this.width / 2;
@@ -69,6 +69,11 @@ export default class ReelsContainer extends Container {
     if (this.running) return;
     this.running = true;
     this.results = [];
+
+    /**
+     * TODO: This is a bottleneck. We should run this syncronously with a spin start.
+     * Once we receive the response we should update the reels and call for a spin stop.
+     * */
 
     await mockServerResponse().then((results) =>
       this.updateResults(results as Sprite[][])
@@ -174,6 +179,10 @@ export default class ReelsContainer extends Container {
     }
   }
 
+  /**
+   * TODO: Review if this function makes sense here of if it should mvoed somehwerelese.
+   * Its own component or else.
+   */
   calculateOutcome() {
     const rows = this.reels[0].symbols
       .map((symbol: Sprite) => symbol.position.y)
@@ -213,6 +222,9 @@ export default class ReelsContainer extends Container {
   }
 }
 
+/**
+ * TODO: This should be moved in a server component or class.
+ */
 const mockServerResponse = () => {
   const reelRes: Sprite[][] = [];
   for (let reel = 0; reel < REELS_AMOUNT; reel++) {
