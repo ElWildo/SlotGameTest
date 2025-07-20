@@ -180,8 +180,8 @@ export default class ReelsContainer extends Container {
   }
 
   /**
-   * TODO: Review if this function makes sense here of if it should mvoed somehwerelese.
-   * Its own component or else.
+   * TODO: This seems t5o be a mix of logic and visuals.
+   * Logic should be probabbly moved to a server component/class
    */
   calculateOutcome() {
     const rows = this.reels[0].symbols
