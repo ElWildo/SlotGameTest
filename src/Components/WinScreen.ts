@@ -2,7 +2,12 @@ import { Container, Rectangle, Sprite, Text } from "pixi.js";
 import CoinsEmitter from "./CoinsEmitter";
 import { getStyle } from "../utils/utils";
 import { gsap } from "gsap";
-import { FXs, winAnimationTime, winTextAssets } from "../Setup/config";
+import {
+  FXs,
+  winAnimationTime,
+  WinCount,
+  winTextAssets,
+} from "../Setup/config";
 export default class WinScreen extends Container {
   private coinsEmitter: CoinsEmitter | null = null;
   private winText: Text | null = null;
@@ -259,4 +264,14 @@ export default class WinScreen extends Container {
         })
       );
   }
+
+  calculateWin = (count: WinCount) => {
+    if (count["4"] > 0 || count["5"] > 0) {
+      this.playMegaWinAnimation();
+    } else if (count["3"] > 0) {
+      this.playBigWinAnimation();
+    } else if (count["2"] > 0) {
+      this.playSmallWinAnimation();
+    }
+  };
 }

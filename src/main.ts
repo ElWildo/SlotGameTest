@@ -75,7 +75,8 @@ const verticalScreen = window.innerHeight > window.innerWidth;
     SYMBOL_SIZE * REELS_AMOUNT,
     SYMBOL_SIZE * (SYM_PER_REEL_AMOUNT - 1)
   );
-  const reelsContainer = new ReelsContainer(isWin, reelBounds);
+  const winScreen = new WinScreen(screenBounds);
+  const reelsContainer = new ReelsContainer(winScreen.calculateWin, reelBounds);
 
   app.stage.addChild(reelsContainer);
 
@@ -99,20 +100,5 @@ const verticalScreen = window.innerHeight > window.innerWidth;
   });
 
   //Set Win Screens
-
-  const winScreen = new WinScreen(screenBounds);
   app.stage.addChild(winScreen);
-
-  /**
-   * TODO: This should be in somewhere else. WinScreen or in some controller
-   */
-  function isWin(count: WinCount) {
-    if (count["4"] > 0 || count["5"] > 0) {
-      winScreen.playMegaWinAnimation();
-    } else if (count["3"] > 0) {
-      winScreen.playBigWinAnimation();
-    } else if (count["2"] > 0) {
-      winScreen.playSmallWinAnimation();
-    }
-  }
 })();
